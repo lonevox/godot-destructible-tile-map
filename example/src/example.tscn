@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://hle2c2lewqml"]
+
+[ext_resource type="Script" path="res://addons/DestructibleTileMap/TileBody.cs" id="1_x8x0f"]
+
+[sub_resource type="TileSet" id="TileSet_rfqjr"]
+
+[node name="Example" type="Node"]
+
+[node name="TileBody" type="RigidBody2D" parent="."]
+script = ExtResource("1_x8x0f")
+
+[node name="TileMap" type="TileMap" parent="TileBody"]
+tile_set = SubResource("TileSet_rfqjr")
+format = 2
