@@ -11,7 +11,6 @@ public partial class TileBody : RigidBody2D
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-
         ChildEnteredTree += (node) => OnChildEnteredTree(node);
         ChildExitingTree += (node) => OnChildExitingTree(node);
     }
@@ -31,7 +30,9 @@ public partial class TileBody : RigidBody2D
         // BUG For some reason the below Remove doesnt work. It seems like the warning is added after this method is called.
         warnings.Remove("This node has no shape, so it can't collide or interact with other objects.\nConsider adding a CollisionShape2D or CollisionPolygon2D as a child to define its shape.");
 
-        var tileMapChildren = GetChildren().Where(child => child is TileMap).Select(tileMap => tileMap as TileMap);
+        var tileMapChildren = GetChildren()
+            .Where(child => child is TileMap)
+            .Select(tileMap => tileMap as TileMap);
         // Add warning for not having a TileMap child.
         if (!tileMapChildren.Any())
         {
@@ -43,17 +44,13 @@ public partial class TileBody : RigidBody2D
             foreach (var tileMapChild in tileMapChildren)
             {
                 var tileSet = tileMapChild.TileSet;
-                if (tileSet != null)
+                if (tileSet?.GetCustomDataLayerByName("Mass") == -1)
                 {
-                    GD.Print(tileSet.GetCustomDataLayerByName("Mass"));
-                    if (tileSet.GetCustomDataLayerByName("Mass") == -1)
-                    {
-                        warnings.Add("Child TileMap '" + tileMapChild.Name + "' needs a custom layer called 'Mass' in it's TileSet to function correctly.");
-                    }
-                    if (tileSet.GetCustomDataLayerByName("Strength") == -1)
-                    {
-                        warnings.Add("Child TileMap '" + tileMapChild.Name + "' needs a custom layer called 'Strength' in it's TileSet to function correctly.");
-                    }
+                    warnings.Add("Child TileMap '" + tileMapChild.Name + "' needs a custom layer called 'Mass' in it's TileSet to function correctly.");
+                }
+                if (tileSet?.GetCustomDataLayerByName("Strength") == -1)
+                {
+                    warnings.Add("Child TileMap '" + tileMapChild.Name + "' needs a custom layer called 'Strength' in it's TileSet to function correctly.");
                 }
             }
         }
@@ -64,7 +61,6 @@ public partial class TileBody : RigidBody2D
 
     private void OnChildEnteredTree(Node node)
     {
-        if (node == null) return;
         // Record new TileMap.
         if (node is TileMap)
         {
@@ -74,7 +70,6 @@ public partial class TileBody : RigidBody2D
 
     private void OnChildExitingTree(Node node)
     {
-        if (node == null) return;
         // Remove TileMap from tileMaps.
         if (node is TileMap)
         {
